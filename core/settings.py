@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'product',
+    'profiles',
+    'order',
+
 
 
 
@@ -59,7 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # TODO:
+    # TODO: remove debug toolbar
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
