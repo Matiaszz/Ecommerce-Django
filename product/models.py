@@ -1,10 +1,10 @@
 # pylint: disable=fixme
 
 """Models"""
+import os
+from PIL import Image
 from django.conf import settings
 from django.db import models
-from PIL import Image
-import os
 
 
 class Product(models.Model):
@@ -21,13 +21,6 @@ class Product(models.Model):
             types - Choices
                 ('V', 'Variable'),
                 ('S', 'Simple'),
-
-        Variation:
-            name - char
-            product - FK Product
-            price - Float
-            promotional_price - Float
-            estoque - Int
     """
 
     name = models.CharField(max_length=255)
@@ -52,11 +45,13 @@ class Product(models.Model):
 
     @staticmethod
     def resize_image(img, new_width=800):
-        """_summary_
+        """Resize images
 
         Args:
-            img (models.ImageField): _description_
-            new_width (int, optional): _description_. Defaults to 800.
+            img (models.ImageField): receive a ImageField from django to resize
+
+            new_width (int, optional): new width for the image.
+            Defaults to 800.
         """
         img_full_path = os.path.join(settings.MEDIA_ROOT, img.name)
         img_pil = Image.open(img.file)
@@ -87,10 +82,12 @@ class Product(models.Model):
 
 
 class Variation(models.Model):
-    """_summary_
-
-    Args:
-        models (_type_): _description_
+    """Variation
+        name - char
+        product - FK Product
+        price - Float
+        promotional_price - Float
+        stock - Int
     """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, blank=True, null=True)
