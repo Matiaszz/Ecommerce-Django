@@ -18,5 +18,6 @@ class VariationInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Product admin"""
-    list_display = ['name', 'marketing_price', 'slug']
+    list_display = ['name', 'short_description',
+                    'get_price_formated', 'get_promotional_price_formated']
     inlines = [VariationInline]
