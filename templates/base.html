@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+
+{% include "static/partials/_head.html" %}
+
+<body>
+    {% include "static/partials/_nav.html" %}
+
+    <main class="container mt-4 mb-4">
+        {% block content %}{% endblock content %}
+    </main>
+
+    {% include "static/partials/_footer.html" %}
+
+    
+</body>
+
+</html>

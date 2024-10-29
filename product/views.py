@@ -2,11 +2,14 @@
 from django.views.generic.list import ListView
 from django.views import View
 from django.http import HttpResponse
+from . import models
 
 
 class ListProduct(ListView):
-    def get(self, *args, **kwargs):
-        return HttpResponse('ListProduct')
+    model = models.Product
+    template_name = 'product/list.html'
+    context_object_name = 'products'
+    paginate_by = 10
 
 
 class ProductDetail(View):
