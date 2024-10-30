@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load agfilters %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg">
+            <div class="row no-gutters">
+                <div class="col-lg-12">
+                    <img class="img-fluid" src="{{product.image.url}}">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="mt-4 mt-lg-0">
+                <h1 class="h2">{{product.name}}</h1>
+                <p class="lead">{{product.long_description}}</p>
+                <p class="lead">
+                    {% if product.promotional_marketing_price %}
+                        <span id="variation-preco" class="lead product-price">{{product.promotional_marketing_price | formated_price}}</span>
+
+                        <span id="variation-preco-promocional" class="lead product-old-price text-muted">{{product.marketing_price | formated_price}}</span>
+
+                    {% else %}
+                        <span id="variation-preco" class="lead product-price">{{product.marketing_price | formated_price}}</span>
+                    {% endif %}
+                </p>
+                
+                <form action="{% url "product:addtocart" %}" id="form-add-to-cart">
+                    <div class="form-group">
+                        
+                        <select id="select-variacoes" name="vid" class="form-control form-control-lg">
+                            {% for var in product.variation_set.all %}
+                                {% if var.promotional_marketing_price %}
+                                    <option data-preco={{var.promotional_marketing_price | formated_price}} data-preco-promocional="{{var.marketing_price | formated_price}}" value="{{var.id}}">
+                                        {{var}}
+                                    </option>
+
+                                {% else %}
+                                    <option data-preco={{var.marketing_price | formated_price}} value="{{var.id}}">
+                                        {{var}}
+                                    </option>
+                                {% endif %}
+
+                                
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="text-left">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                            Adicionar ao carrinho
+                        </button>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="mt-5 mb-5">
+                <h2 class="text-center">{{product.name}}</h2>
+                {{product.long_description | linebreaks}}
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
