@@ -5,7 +5,9 @@
         <div class="col-lg">
             <div class="row no-gutters">
                 <div class="col-lg-12">
-                    <img class="img-fluid" src="{{product.image.url}}">
+                    {% if product.image %}
+                        <img class="img-fluid" src="{{product.image.url}}">
+                    {% endif %}
                 </div>
             </div>
         </div>

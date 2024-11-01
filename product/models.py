@@ -50,7 +50,9 @@ class Product(models.Model):
         Get the price of product and format them
         """
 
-        return price_format(self.marketing_price)
+        return price_format(self.marketing_price) \
+            if self.marketing_price is not None else 'N/A'
+
     get_price_formated.short_description = 'Price'
 
     def get_promotional_price_formated(self):
@@ -58,7 +60,9 @@ class Product(models.Model):
         Get the promotional price of product and format them
         """
 
-        return price_format(self.promotional_marketing_price)
+        return price_format(self.promotional_marketing_price)  \
+            if self.promotional_marketing_price is not None else 'N/A'
+
     get_promotional_price_formated.short_description = 'Promotional Price'
 
     @staticmethod
