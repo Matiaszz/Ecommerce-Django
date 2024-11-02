@@ -16,12 +16,22 @@ class ListProduct(ListView):
     context_object_name = 'products'
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Home '
+        return context
+
 
 class ProductDetail(DetailView):
     model = models.Product
     template_name = 'product/detail.html'
     context_object_name = 'product'
     slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Product '
+        return context
 
 
 class AddToCart(View):
@@ -113,7 +123,6 @@ class AddToCart(View):
 
 class RemoveFromCart(View):
     def get(self, *args, **kwargs):
-
         referer = self.request.META.get(
             'HTTP_REFERER', resolve_url('product:list'))
 
@@ -145,10 +154,11 @@ class Cart(View):
     def get(self, *args, **kwargs):
         context = {
             'cart': self.request.session.get('cart', {}),
+            'title': 'Cart ',
         }
         return render(self.request, 'product/cart.html', context)
 
 
-class Finish(View):
+class PurchaseSummary(View):
     def get(self, *args, **kwargs):
         return HttpResponse('Finish')

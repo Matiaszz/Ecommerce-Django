@@ -3,7 +3,7 @@
 """Models"""
 import os
 from PIL import Image
-from utils.price import price_format
+from utils.utils import price_format
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify

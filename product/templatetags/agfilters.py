@@ -1,5 +1,5 @@
 from django.template import Library
-from utils.price import price_format, cart_total_qtd
+from utils.utils import price_format, cart_total_qtd, cart_total_price
 register = Library()
 
 
@@ -11,3 +11,8 @@ def formated_price(price: float):
 @register.filter()
 def calculate_total_items(cart):
     return cart_total_qtd(cart)
+
+
+@register.filter()
+def calculate_price(cart):
+    return cart_total_price(cart)

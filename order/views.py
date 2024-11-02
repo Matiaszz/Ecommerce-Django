@@ -13,6 +13,6 @@ class OrderDetails(View):
         return HttpResponse('Order Details')
 
 
-class CloseOrder(View):
+class SaveOrder(View):
     def get(self, *args, **kwargs):
         return HttpResponse('Close Order')
