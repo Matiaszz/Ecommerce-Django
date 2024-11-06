@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg">
+            <h1>Login</h1>
+            {% comment %} <form action="" method="post">
+                {{% csrf_token %}}
+                {{profileform}}
+
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Enviar</button>
+                    </div>
+                </div>
+            </form> {% endcomment %}
+            
+        </div>
+        <div class="col-lg">
+            <h1>Cadastrar</h1>
+            <form action="" method="post">
+                {% csrf_token %}
+                {{userform | crispy}}
+
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Cadastrar</button>
+                    </div>
+                </div>
+            </form>
+            
+            
+        </div>
+    </div>
+{% endblock content %}
