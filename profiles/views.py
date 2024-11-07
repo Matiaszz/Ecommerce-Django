@@ -34,6 +34,7 @@ class ProfileBase(View):
             self.request, self.template_name, self.context)
 
     def get(self, *args, **kwargs):
+
         return self.renderization
 
 
