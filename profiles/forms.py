@@ -15,7 +15,8 @@ class UserForm(forms.ModelForm):
         required=False, widget=forms.PasswordInput(), label='Senha')
 
     password2 = forms.CharField(
-        required=False, widget=forms.PasswordInput, label='Confirmação senha')
+        required=False, widget=forms.PasswordInput(),
+        label='Confirmação senha')
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,17 +28,18 @@ class UserForm(forms.ModelForm):
                   'email', 'password', 'password2')
 
     def clean(self):
-        # data = self.data
-        cleaned = self.cleaned_data
+        cleaned_data = self.cleaned_data
         validation_error_msgs = {}
 
-        user_data = cleaned.get('username')
-        email_data = cleaned.get('email')
-        password_data = cleaned.get('password')
-        password2_data = cleaned.get('password2')
+        user_data = cleaned_data.get('username')
+        email_data = cleaned_data.get('email')
+        password_data = cleaned_data.get('password')
+        password2_data = cleaned_data.get('password2')
 
-        user_db = User.objects.filter(username=user_data).first()
-        email_db = User.objects.filter(email=email_data).first()
+        user_db = User.objects.filter(username=user_data).exclude(
+            pk=self.user.pk if self.user else None).first()
+        email_db = User.objects.filter(email=email_data).exclude(
+            pk=self.user.pk if self.user else None).first()
 
         error_msg_user_exists = 'Usuário já existe.'
         error_email_exists = 'Email já existe.'
@@ -45,46 +47,25 @@ class UserForm(forms.ModelForm):
         error_short_password = 'A senha deve ter mais que 6 caracteres.'
         error_required_field = 'Este campo é obrigatório.'
 
-        # user authenticated
-        # if user authenticated, update the infos
-        if self.user:
-            if (user_db) and (user_data != user_db.username):
-                validation_error_msgs['username'] = error_msg_user_exists
+        if user_db:
+            validation_error_msgs['username'] = error_msg_user_exists
 
-            if (email_db) and (email_data != email_db.email):
-                validation_error_msgs['email'] = error_email_exists
+        if email_db:
+            validation_error_msgs['email'] = error_email_exists
 
-            if password_data:
-                if password_data != password2_data:
-                    validation_error_msgs['password'] = error_password_match
-                    validation_error_msgs['password2'] = error_password_match
+        if password_data or password2_data:
+            if password_data != password2_data:
+                validation_error_msgs['password'] = error_password_match
+                validation_error_msgs['password2'] = error_password_match
+            if password_data and len(password_data) < 7:
+                validation_error_msgs['password'] = error_short_password
 
-                if len(password_data) < 7:
-                    validation_error_msgs['password'] = error_short_password
-
-        # user not authenticated
-        # else, register
         else:
-            if (user_db) and (user_data == user_db.username):
-                validation_error_msgs['username'] = error_msg_user_exists
-
-            if (email_db) and (email_data != email_db.email):
-
-                validation_error_msgs['email'] = error_email_exists
-
-            if password_data:
-                if password_data != password2_data:
-                    validation_error_msgs['password'] = error_password_match
-                    validation_error_msgs['password2'] = error_password_match
-
-                if len(password_data) < 7:
-                    validation_error_msgs['password'] = error_short_password
-
-            if not password_data:
+            if not self.user:
                 validation_error_msgs['password'] = error_required_field
-
-            if not password2_data:
                 validation_error_msgs['password2'] = error_required_field
 
         if validation_error_msgs:
             raise forms.ValidationError(validation_error_msgs)
+
+        return cleaned_data

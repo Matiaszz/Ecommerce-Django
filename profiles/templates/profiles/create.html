@@ -5,16 +5,7 @@
     <div class="row">
         <div class="col-lg">
             <h1>Login</h1>
-            {% comment %} <form action="" method="post">
-                {{% csrf_token %}}
-                {{profileform}}
-
-                <div class="row">
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">Enviar</button>
-                    </div>
-                </div>
-            </form> {% endcomment %}
+            
             
         </div>
         <div class="col-lg">
@@ -22,6 +13,7 @@
             <form action="" method="post">
                 {% csrf_token %}
                 {{userform | crispy}}
+                {{profileform | crispy}}
 
                 <div class="row">
                     <div class="col">
