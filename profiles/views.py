@@ -2,6 +2,7 @@
 from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
 from . import models, forms
 import copy
 
@@ -27,7 +28,8 @@ class ProfileBase(View):
                     user=self.request.user, instance=self.request.user),
 
                 'profileform': forms.ProfileForm(
-                    data=self.request.POST or None,),
+                    data=self.request.POST or None),
+                'title': 'Profile '
 
             }
         else:
@@ -35,6 +37,7 @@ class ProfileBase(View):
                 'userform': forms.UserForm(data=self.request.POST or None),
                 'profileform': forms.ProfileForm(
                     data=self.request.POST or None),
+                'title': 'Profile '
 
             }
 
@@ -51,11 +54,10 @@ class Create(ProfileBase):
         super().setup(*args, **kwargs)
 
         if self.request.user.is_authenticated:
-            # Carrega o perfil existente do usuário, se houver
+
             self.profile = models.ProfileUser.objects.filter(
                 user=self.request.user).first()
 
-            # Preenche os formulários com as informações existentes
             self.context = {
                 'userform': forms.UserForm(
                     data=self.request.POST or None,
@@ -68,14 +70,17 @@ class Create(ProfileBase):
                 )
             }
         else:
-            # Para usuários não autenticados, mantém os formulários vazios
+
             self.context = {
                 'userform': forms.UserForm(data=self.request.POST or None),
                 'profileform': forms.ProfileForm(
-                    data=self.request.POST or None)
+                    data=self.request.POST or None),
+
             }
 
-        # Renderiza o template com o contexto atualizado
+        if self.request.user.is_authenticated:
+            self.template_name = 'profiles/update.html'
+
         self.renderization = render(
             self.request, self.template_name, self.context)
 
@@ -83,11 +88,9 @@ class Create(ProfileBase):
         self.userform = self.context['userform']
         self.profileform = self.context['profileform']
 
-        # Valida tanto o formulário de usuário quanto o de perfil
         if not self.userform.is_valid() or not self.profileform.is_valid():
             return self.renderization
 
-        # Obtenção dos dados do usuário
         username = self.userform.cleaned_data.get('username')
         password = self.userform.cleaned_data.get('password')
         email = self.userform.cleaned_data.get('email')
@@ -95,7 +98,6 @@ class Create(ProfileBase):
         last_name = self.userform.cleaned_data.get('last_name')
 
         if self.request.user.is_authenticated:
-            # Usuário autenticado: atualização de informações
             user = self.request.user
             user.username = username  # type: ignore
 
@@ -107,7 +109,6 @@ class Create(ProfileBase):
             user.last_name = last_name  # type: ignore
             user.save()
 
-            # Atualiza ou cria o perfil associado
             profile = models.ProfileUser.objects.filter(user=user).first()
             if profile:
                 self.profileform = forms.ProfileForm(
@@ -121,7 +122,6 @@ class Create(ProfileBase):
                 profile.save()
 
         else:
-            # Usuário não autenticado: criação de um novo usuário e perfil
             user = self.userform.save(commit=False)
             user.set_password(password)
             user.save()
@@ -130,7 +130,13 @@ class Create(ProfileBase):
             profile.user = user
             profile.save()
 
-        # TODO: fix - save the cart after the password change
+        if password:
+            auth = authenticate(
+                self.request, username=user, password=password
+            )
+            if auth:
+                login(self.request, user=user)  # type: ignore
+
         self.request.session['cart'] = self.cart
         self.request.session.save()
         return self.renderization

@@ -36,10 +36,6 @@ class ProductDetail(DetailView):
 
 class AddToCart(View):
     def get(self, *args, **kwargs):
-        # TODO: REMOVE THE LINES ABOVE
-        # if self.request.session.get('cart'):
-        #     del self.request.session['cart']
-        #     self.request.session.save()
 
         referer = self.request.META.get(
             'HTTP_REFERER', resolve_url('product:list'))
