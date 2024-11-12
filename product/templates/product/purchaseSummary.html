@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load agfilters %}
+<div class="row mb-5">
+    <div class="col-lg">
+        <h2>Resumo da sua compra</h2>
+
+        <p class="lead">Dados do usuário</p>
+        <p>Caso precise editar, <a href="{% url "profile:create" %}">clique aqui</a></p>
+        <dl class="row">
+            <dt class="col-lg-2">Nome:</dt>
+            <dd class="col-lg-4">{{user.first_name}}</dd>
+            <dt class="col-lg-2">Sobrenome:</dt>
+            <dd class="col-lg-4">{{user.last_name}}</dd>
+
+            <dt class="col-lg-2">Nascimento:</dt>
+            <dd class="col-lg-4">{{user.profileuser.birth_date}}</dd>
+
+            <dt class="col-lg-2">CPF:</dt>
+            <dd class="col-lg-4">{{user.profileuser.cpf}}</dd>
+            <dt class="col-lg-2">E-mail:</dt>
+            <dd class="col-lg-4">{{user.email}}</dd>
+        </dl>
+
+        <p class="lead">Dados de endereço</p>
+        <p>Caso precise editar, <a href="{% url "profile:create" %}">clique aqui</a></p>
+        <dl class="row">
+
+            <dt class="col-lg-2">Endereço:</dt>
+            <dd class="col-lg-4">{{user.profileuser.adress}}</dd>
+            <dt class="col-lg-2">Número:</dt>
+            <dd class="col-lg-4">{{user.profileuser.house_number}}</dd>
+
+            <dt class="col-lg-2">Complemento:</dt>
+            <dd class="col-lg-4">{{user.profileuser.complement}}</dd>
+            <dt class="col-lg-2">Bairro:</dt>
+            <dd class="col-lg-4">{{user.profileuser.neighborhood}}</dd>
+
+            <dt class="col-lg-2">Cidade:</dt>
+            <dd class="col-lg-4">{{user.profileuser.city}}</dd>
+            <dt class="col-lg-2">Estado:</dt>
+            <dd class="col-lg-4">{{user.profileuser.state}}</dd>
+
+            <dt class="col-lg-2">CEP:</dt>
+            <dd class="col-lg-4">{{user.profileuser.cep}}</dd>
+        </dl>
+    </div>
+</div>
+
+
+
+<div class="row mt-3">
+    <div class="col">
+        <h3>Resumo do carrinho</h3>
+        <p class="lead">Os produtos, quantidades e preços que você escolheu.</p>
+
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th class="d-none d-lg-block">Imagem</th>
+                    <th>Produto</th>
+                    <th>V.</th>
+                    <th>QTD.</th>
+                    <th>Preço</th>
+                </tr>
+        
+                {% for item in cart.values %}
+                    <tr>
+                        <td class="d-none d-lg-block">
+                            <img class="cart-img" src="{% get_media_prefix %}{{item.image}}">
+                        </td>
+                        <td>
+                            <a target="_blank" href="{% url "product:detail" item.slug %}">
+                                {{item.product_name}}
+                            </a>
+                            <a class="ml-3" href="{% url "product:removefromcart" %}?vid={{item.id_variation}}">
+                                <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                       
+                        <td>{{item.variation_name}}</td>
+                        
+                        <td>
+                            {{item.quantity}}x
+                            {% if item.promotional_unitary_price %}
+                                {{item.promotional_unitary_price | formated_price}}
+                            {% else %}
+                                {{item.unitary_price | formated_price}}
+                            {% endif %}
+                        </td>
+        
+                        {% if item.promotional_quantitative_price %}
+                            <td>{{item.promotional_quantitative_price | formated_price}}</td>
+        
+                        {% else %}
+                            <td>{{item.quantitative_price | formated_price}}</td>
+        
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+        
+        
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col">
+    <p class="lead text-center"><strong>Preço total:</strong> {{cart | calculate_price | formated_price}}</p>
+</div>
+
+<div class="row">
+    <div class="col">
+        <a class="btn btn-block btn-primary btn-lg" href="{% url "order:payment" %}">
+            Realizar pedido e pagar
+        </a>
+    </div>
+</div>
+
+{% endblock content %}

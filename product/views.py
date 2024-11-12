@@ -5,7 +5,6 @@ from django.shortcuts import (
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views import View
-from django.http import HttpResponse
 from django.contrib import messages
 from . import models
 
@@ -157,4 +156,13 @@ class Cart(View):
 
 class PurchaseSummary(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Finish')
+        if not self.request.user.is_authenticated:
+            return redirect('profile:create')
+
+        context = {
+            'title': 'Resumo ',
+            'user': self.request.user,
+            'cart': self.request.session['cart']
+
+        }
+        return render(self.request, 'product/purchaseSummary.html', context)

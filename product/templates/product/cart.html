@@ -75,9 +75,15 @@
                 </div>
             </div>
             <div class="col-lg mt-auto">
-                <a class="btn btn-lg btn-block btn-primary" href="#">
-                    Finalizar a compra
+                {% if request.user.is_authenticated %}
+                <a class="btn btn-lg btn-block btn-primary" href="{% url "product:purchasesummary" %}">
+                    Comprar
                 </a>
+                {% else %}
+                <a class="btn btn-lg btn-block btn-primary" href="{% url "profile:create" %}">
+                    Faça login para finalizar sua compra
+                </a>
+                {% endif %}
             </div>
         </div>
     {% else %}

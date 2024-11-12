@@ -90,6 +90,10 @@ class Create(ProfileBase):
         self.profileform = self.context['profileform']
 
         if not self.userform.is_valid() or not self.profileform.is_valid():
+            messages.error(
+                self.request,
+                'Erro ao cadastrar, verifique se os campos estão corretos.'
+            )
             return self.renderization
 
         username = self.userform.cleaned_data.get('username')

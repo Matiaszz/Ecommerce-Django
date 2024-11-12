@@ -6,6 +6,9 @@
 
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.css'%}">
     <link rel="stylesheet" href="{% static 'assets/custom/css/style.css'%}">
-
-    <title>{{title}}- Ecommerce</title>
+    {% if title %}
+        <title>{{title}}- Ecommerce</title>
+    {% else %}
+        <title>Profile - Ecommerce</title>
+    {% endif %}
 </head>
