@@ -7,6 +7,7 @@ from django.views.generic.list import ListView
 from django.views import View
 from django.contrib import messages
 from . import models
+from profiles.models import ProfileUser
 
 
 class ListProduct(ListView):
@@ -158,6 +159,15 @@ class PurchaseSummary(View):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             return redirect('profile:create')
+
+        profile = ProfileUser.objects.filter(user=self.request.user).exists()
+        if not profile:
+            messages.error(self.request, 'Usuário sem perfil')
+            return redirect('profile:create')
+
+        if not self.request.session.get('cart'):
+            messages.info(self.request, 'Carrinho vazio')
+            return redirect('product:list')
 
         context = {
             'title': 'Resumo ',
