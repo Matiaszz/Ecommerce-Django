@@ -1,8 +1,9 @@
 # pylint: disable=all
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from . import models, forms
 import copy
 
@@ -130,16 +131,37 @@ class Create(ProfileBase):
             profile.user = user
             profile.save()
 
-        if password:
-            auth = authenticate(
-                self.request, username=user, password=password
-            )
-            if auth:
-                login(self.request, user=user)  # type: ignore
+        authenticate(
+            self.request, username=username, password=password
+        )
+
+        login(self.request, user=user)  # type: ignore
 
         self.request.session['cart'] = self.cart
         self.request.session.save()
-        return self.renderization
+
+        messages.success(
+            self.request, 'Informações cadastradas/alteradas com sucesso')
+
+        return redirect('profile:create')
+
+
+class Login(View):
+    def post(self, *args, **kwargs):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+
+        if not username or not password:
+            messages.error(self.request, 'Credenciais inválidas.')
+
+        user = authenticate(self.request, username=username, password=password)
+        if user:
+            login(self.request, user=user)
+            messages.success(self.request, 'Login realizado com sucesso.')
+            return redirect('product:list')
+
+        messages.error(self.request, 'Credenciais inválidas.')
+        return redirect('profile:create')
 
 
 class Update(ProfileBase):
@@ -147,11 +169,13 @@ class Update(ProfileBase):
         return HttpResponse('Update')
 
 
-class Login(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('Login')
-
-
 class Logout(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Logout')
+
+        cart = copy.deepcopy(self.request.session.get('cart'))
+        logout(self.request)
+
+        self.request.session['cart'] = cart
+        self.request.session.save()
+
+        return redirect('product:list')
