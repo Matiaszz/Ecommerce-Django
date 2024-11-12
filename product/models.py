@@ -1,10 +1,9 @@
 # pylint: disable=fixme
 
 """Models"""
-import os
+import io
 from PIL import Image
 from utils.utils import price_format
-from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -65,41 +64,27 @@ class Product(models.Model):
 
     get_promotional_price_formated.short_description = 'Promotional Price'
 
-    @staticmethod
-    def resize_image(img, new_width=800):
-        """Resize images
-
-        Args:
-            img (models.ImageField): receive a ImageField from django to resize
-
-            new_width (int, optional): new width for the image.
-            Defaults to 800.
-        """
-        img_full_path = os.path.join(settings.MEDIA_ROOT, img.name)
-        img_pil = Image.open(img.file)
-        original_width, original_height = img_pil.size
-        if original_width <= new_width:
-            img_pil.close()
-
-            return
-        new_height = round((new_width * original_height) / original_width)
-
-        new_img = img_pil.resize(
-            (new_width, new_height), Image.Resampling.LANCZOS)
-
-        new_img.save(img_full_path, optimize=True, quality=70)
-
-        img_pil.close()
-        return new_img
-
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = f'{slugify(self.name)}'
-            self.slug = slug
+            self.slug = slugify(self.name)
+
         if self.image:
-            max_image_size = 800
-            self.resize_image(self.image, max_image_size)
-        return super().save(*args, **kwargs)
+            self.image.open()
+            self.resize_image(self.image, 800)
+
+        super().save(*args, **kwargs)
+
+    def resize_image(self, image_field, max_size):
+        img = Image.open(image_field)
+
+        if img.height > max_size or img.width > max_size:
+            output_size = (max_size, max_size)
+            img.thumbnail(output_size)
+
+            img_io = io.BytesIO()
+            img.save(img_io, format=img.format)
+            image_field.file = img_io
+            image_field.file.seek(0)
 
     def __str__(self):
         return str(self.name)
