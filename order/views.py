@@ -9,6 +9,26 @@ from .models import Order, OrderedItem
 
 
 class Payment(View):
+    def get(self, *args, **kwargs):
+        return HttpResponse('pagarararara')
+
+
+class OrderList(View):
+    def get(self, *args, **kwargs):
+        # context = {
+        #     'title': 'Pagamento',
+        #     'qtd_total_cart': qtd_cart,
+        #     'total_value': cart_value_total
+        # }
+        return HttpResponse('Order list')
+
+
+class OrderDetails(View):
+    def get(self, *args, **kwargs):
+        return HttpResponse('Order Details')
+
+
+class SaveOrder(View):
     template_name = 'order/pay.html'
 
     def get(self, *args, **kwargs):
@@ -84,23 +104,3 @@ class Payment(View):
         del self.request.session['cart']
         # return render(self.request, self.template_name, context)
         return redirect('order:list')
-
-
-class OrderList(View):
-    def get(self, *args, **kwargs):
-        # context = {
-        #     'title': 'Pagamento',
-        #     'qtd_total_cart': qtd_cart,
-        #     'total_value': cart_value_total
-        # }
-        return HttpResponse('Order list')
-
-
-class OrderDetails(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('Order Details')
-
-
-class SaveOrder(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('Close Order')
