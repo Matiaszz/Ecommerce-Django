@@ -12,4 +12,7 @@ urlpatterns = [
     path('details/', views.OrderDetails.as_view(),
          name='order_details'),
 
+    path('list/', views.OrderList.as_view(),
+         name='list'),
+
 ]

@@ -136,8 +136,8 @@ class RemoveFromCart(View):
         cart = self.request.session['cart'][id_variation]
 
         messages.success(self.request,
-                         f'The product "{cart["product_name"]}"'
-                         'has been removed'
+                         f'O produto "{cart["product_name"]}"'
+                         'foi removido.'
                          )
 
         del self.request.session['cart'][id_variation]

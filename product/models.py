@@ -28,10 +28,8 @@ class Product(models.Model):
     short_description = models.TextField(max_length=70)
     long_description = models.TextField(max_length=255)
 
-    # TODO: Remove blank and null on finish of project
     image = models.ImageField(
-        upload_to='media/product_images%Y/%m/',
-        blank=True, null=True)
+        upload_to='media/product_images%Y/%m/')
     slug = models.SlugField(unique=True, null=True, blank=True)
     marketing_price = models.FloatField()
     promotional_marketing_price = models.FloatField(

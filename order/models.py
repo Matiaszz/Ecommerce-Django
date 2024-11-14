@@ -19,6 +19,7 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.FloatField()
+    qtd_total = models.PositiveIntegerField()
     status = models.CharField(default='c', max_length=1, choices=(
         ('A', 'Aproved'),
         ('C', 'Created'),
