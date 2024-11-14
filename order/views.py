@@ -1,6 +1,8 @@
 # pylint: disable=all
+
 from django.views import View
-from django.shortcuts import redirect
+from django.views.generic import DetailView
+from django.shortcuts import redirect, resolve_url
 from django.http import HttpResponse
 from django.contrib import messages
 from product.models import Variation
@@ -8,9 +10,24 @@ from utils import utils
 from .models import Order, OrderedItem
 
 
-class Payment(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('pagarararara')
+class DispatchLoginRequired(View):
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('profile:create')
+
+        return super().dispatch(*args, **kwargs)
+
+
+class Payment(DispatchLoginRequired, DetailView):
+    template_name = 'order/pay.html'
+    model = Order
+    pk_url_kwarg = 'pk'
+    context_object_name = 'order'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(user=self.request.user)
+        return qs
 
 
 class OrderList(View):
@@ -101,6 +118,8 @@ class SaveOrder(View):
         ]
         )
 
-        del self.request.session['cart']
-        # return render(self.request, self.template_name, context)
-        return redirect('order:list')
+        # del self.request.session['cart']
+        return redirect(resolve_url(
+            'order:payment',
+            order.pk
+        ))

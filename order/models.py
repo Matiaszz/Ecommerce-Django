@@ -21,17 +21,17 @@ class Order(models.Model):
     total = models.FloatField()
     qtd_total = models.PositiveIntegerField()
     status = models.CharField(default='c', max_length=1, choices=(
-        ('A', 'Aproved'),
-        ('C', 'Created'),
-        ('R', 'Reproved'),
-        ('P', 'Pending'),
-        ('S', 'Sent'),
-        ('F', 'Finished'),
+        ('A', 'Aprovado'),
+        ('C', 'Criado'),
+        ('R', 'Reprovado'),
+        ('P', 'Pendente'),
+        ('S', 'Enviado'),
+        ('F', 'Finalizado'),
     )
     )
 
     def __str__(self) -> str:
-        return f'Order N° {self.pk}'
+        return f'Pedido N° {self.pk}'
 
 
 class OrderedItem(models.Model):
