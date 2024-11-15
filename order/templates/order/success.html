@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% load agfilters %} {% block content %}
+<div class="row">
+  <div class="col">
+    <h3>Pagamento realizado com sucesso!</h3>
+    <p>O seu pedido foi processado com sucesso.</p>
+    <p><strong>Número do pedido:</strong> {{ order.id }}</p>
+    <p><strong>Total pago:</strong> {{ order.total|formated_price }}</p>
+    <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+  </div>
+</div>
+{% endblock %}

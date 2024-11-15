@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% load agfilters %} {% block content %}
+<div class="row">
+  <div class="col">
+    <h3>Pagamento cancelado</h3>
+    <p>O pagamento do seu pedido foi cancelado.</p>
+    <p><strong>Número do pedido:</strong> {{ order.id }}</p>
+    <p><strong>Total:</strong> {{ order.total|formated_price }}</p>
+    <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+    <p>Se você tiver dúvidas, entre em contato com o suporte.</p>
+  </div>
+</div>
+{% endblock %}

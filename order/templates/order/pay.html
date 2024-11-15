@@ -1,11 +1,5 @@
-{% extends "base.html" %} {% load agfilters %} {% load static %}----------------
+{% extends "base.html" %} {% load agfilters %} {% load static %}---------------
 {% block content %}
-<div class="row">
-  <div class="col">
-    <h3>Escolha o método de pagamento</h3>
-    <p>Para o desenvolvedor: adicione seu método de pagamento preferido.</p>
-  </div>
-</div>
 
 <div class="row">
   <div class="col">
@@ -46,15 +40,39 @@
           <td>{{ item.product }}</td>
           <td>{{ item.variation }}</td>
           <td>{{ item.quantity }}</td>
+          {% if not item.promotional_price %}
           <td>{{ item.price|formated_price }}</td>
+          {% else %}
+          <td>{{ item.promotional_price|formated_price }}</td>
+          {% endif %}
         </tr>
         {% endfor %}
       </table>
-    </div>
 
-    <div class="row mt-4">
-      <div class="col">
-        <a href="#" class="btn btn-primary btn-block btn-lg">Pagar</a>
+      <div class="row mt-4">
+        <div class="col">
+          <form
+            action="{% url 'order:checkout_session' order.id %}"
+            method="post"
+          >
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="payment_method">Escolha o método de pagamento</label>
+              <select
+                name="payment_method"
+                id="payment_method"
+                class="form-control"
+              >
+                <option value="card">Cartão de Crédito/Débito</option>
+
+                <option value="boleto">Boleto</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+              Pagar
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

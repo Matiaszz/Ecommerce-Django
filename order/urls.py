@@ -6,13 +6,13 @@ app_name = 'order'
 
 urlpatterns = [
     path('pay/<int:pk>', views.Payment.as_view(), name='payment'),
-
     path('saveorder/', views.SaveOrder.as_view(), name='saveorder'),
-
-    path('details/', views.OrderDetails.as_view(),
-         name='order_details'),
-
-    path('list/', views.OrderList.as_view(),
-         name='list'),
-
+    path('details/', views.OrderDetails.as_view(), name='order_details'),
+    path('list/', views.OrderList.as_view(), name='list'),
+    path('checkout-session/<int:order_id>/',
+         views.CheckoutSessionView.as_view(), name='checkout_session'),
+    path(
+        'success/<int:order_id>/', views.SuccessView.as_view(), name='sucess'),
+    path('canceled/<int:order_id>/', views.CanceledView.as_view(),
+         name='canceled')
 ]
