@@ -30,6 +30,11 @@ class Payment(DispatchLoginRequiredMixin, DetailView):
     pk_url_kwarg = 'pk'
     context_object_name = 'order'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Pagamento '
+        return context
+
 
 class OrderList(DispatchLoginRequiredMixin, ListView):
     model = Order
@@ -37,6 +42,11 @@ class OrderList(DispatchLoginRequiredMixin, ListView):
     template_name = 'order/list.html'
     paginate_by = 10
     ordering = '-pk'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Meus pedidos '
+        return context
 
 
 class OrderDetails(DispatchLoginRequiredMixin, DetailView):

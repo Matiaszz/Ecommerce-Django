@@ -18,7 +18,7 @@ class ListProduct(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Home '
+        context["title"] = 'Início '
         return context
 
 
@@ -30,7 +30,7 @@ class ProductDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Product '
+        context["title"] = 'Produto '
         return context
 
 
@@ -111,8 +111,8 @@ class AddToCart(View):
         self.request.session.save()
         messages.success(
             self.request,
-            f'The product {product_name} {variation_name} has '
-            f'been added to the cart {cart[id_variation]["quantity"]}x.')
+            f'O produto {product_name} {variation_name} foi '
+            f'adicionado ao carrinho {cart[id_variation]["quantity"]}x.')
 
         return redirect(referer)
 
@@ -150,7 +150,7 @@ class Cart(View):
     def get(self, *args, **kwargs):
         context = {
             'cart': self.request.session.get('cart', {}),
-            'title': 'Cart ',
+            'title': 'Carrinho ',
         }
         return render(self.request, 'product/cart.html', context)
 
