@@ -65,7 +65,7 @@ class AddToCart(View):
         id_variation = self.request.GET.get('vid')
 
         if not id_variation:
-            messages.error(self.request, 'Product does not exist')
+            messages.error(self.request, 'Produto não existe')
             return redirect(referer)
 
         variation = get_object_or_404(models.Variation, id=id_variation)
@@ -87,7 +87,7 @@ class AddToCart(View):
             image = ''
 
         if variation.stock < 1:
-            messages.error(self.request, 'Insufficient stock.')
+            messages.error(self.request, 'Estoque insuficiente.')
             return redirect(referer)
 
         if not self.request.session.get('cart'):
@@ -101,9 +101,10 @@ class AddToCart(View):
 
             if stock_variation < cart_quantity:
                 messages.warning(
-                    self.request, f'Insufficient stock for {cart_quantity}x '
-                    f'of product "{product_name}". We added {stock_variation}x'
-                    f' to your cart.')
+                    self.request, f'Estoque insuficiente para {
+                        cart_quantity}x '
+                    f'do produto "{product_name}". Foi adicionado '
+                    f'{stock_variation}x ao seu carrinho.')
                 cart_quantity = stock_variation
 
             cart[id_variation]['quantity'] = cart_quantity

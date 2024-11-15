@@ -96,7 +96,7 @@ class Variation(models.Model):
         promotional_price - Float
         stock - Int
     """
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False)
     name = models.CharField(max_length=50, blank=True, null=True)
     marketing_price = models.FloatField()
     promotional_marketing_price = models.FloatField(
