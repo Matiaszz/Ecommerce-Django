@@ -99,13 +99,24 @@ class ProfileUser(models.Model):
 
     def clean(self):
         error_messages = {}
+        sent_cpf = self.cpf or None
+        saved_cpf = None
+        profile = ProfileUser.objects.filter(cpf=sent_cpf).first()
+
+        if profile:
+            saved_cpf = profile.cpf
+
+            if saved_cpf is not None and self.pk != profile.pk:
+                error_messages['cpf'] = 'CPF já existe.'
 
         if not validate_cpf(self.cpf):
-            error_messages['cpf'] = 'Enter a valid CPF'
+            error_messages['cpf'] = 'Digite um CPF válido.'
+
+        print(sent_cpf)
 
         if re.search(r'[^0-9]', self.cep) or len(self.cep) < 8:
             error_messages['cep'] = (
-                'Invalid CEP, enter the 8 digits of your CEP'
+                'CEP inválido'
             )
 
         if error_messages:
