@@ -13,6 +13,4 @@ urlpatterns = [
          views.CheckoutSessionView.as_view(), name='checkout_session'),
     path(
         'success/<int:order_id>/', views.SuccessView.as_view(), name='sucess'),
-    path('canceled/<int:order_id>/', views.CanceledView.as_view(),
-         name='canceled')
 ]
