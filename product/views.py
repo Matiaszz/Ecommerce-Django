@@ -1,4 +1,5 @@
 # pylint: disable=all
+
 from django.shortcuts import (
     redirect, resolve_url, get_object_or_404, render  # type: ignore
 )
@@ -6,6 +7,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views import View
 from django.contrib import messages
+from django.db.models import Q
 from . import models
 from profiles.models import ProfileUser
 
@@ -20,6 +22,27 @@ class ListProduct(ListView):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Início '
         return context
+
+
+class Search(ListProduct):
+    def get_queryset(self, *args, **kwargs):
+        value = self.request.GET.get(
+            'search') or self.request.session['search']
+        qs = super().get_queryset(*args, **kwargs)
+
+        if not value:
+            return qs
+
+        self.request.session['search'] = value
+
+        qs = qs.filter(
+            Q(name__icontains=value) |
+            Q(short_description__icontains=value) |
+            Q(long_description__icontains=value)
+        )
+
+        self.request.session.save()
+        return qs
 
 
 class ProductDetail(DetailView):
