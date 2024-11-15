@@ -59,11 +59,13 @@ Este é um projeto de ecommerce desenvolvido em Django. O objetivo deste reposit
 
 
 8. Realizar uma compra:
+   ```
    Numero do cartão: 4242 4242 4242 4242
    MM/AA -> Qualquer data
    CVC -> Qualquer digito
    Nome -> Qualquer nome
    Email -> Qualquer email que contenha "@" e ".com"
+   ```
 
 
 ## Contribuições
