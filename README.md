@@ -58,6 +58,14 @@ Este é um projeto de ecommerce desenvolvido em Django. O objetivo deste reposit
 7. Acesse a aplicação em `http://127.0.0.1:8000/`.
 
 
+8. Realizar uma compra:
+   Numero do cartão: 4242 4242 4242 4242
+   MM/AA -> Qualquer data
+   CVC -> Qualquer digito
+   Nome -> Qualquer nome
+   Email -> Qualquer email que contenha "@" e ".com"
+
+
 ## Contribuições
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
