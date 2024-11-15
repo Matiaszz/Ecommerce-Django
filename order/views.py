@@ -1,7 +1,7 @@
 # pylint: disable=all
 
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.shortcuts import redirect, resolve_url, render, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
@@ -31,15 +31,32 @@ class Payment(DispatchLoginRequiredMixin, DetailView):
     context_object_name = 'order'
 
 
-class OrderList(View):
+class OrderList(DispatchLoginRequiredMixin, ListView):
+    model = Order
+    context_object_name = 'orders'
+    template_name = 'order/list.html'
+    paginate_by = 10
+    ordering = '-pk'
+
+
+class OrderDetails(DispatchLoginRequiredMixin, DetailView):
+
     def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            messages.error(self.request, 'Você precisa fazer login.')
+            return redirect('profile:create')
 
-        return render(self.request, 'order/list.html')
+        order_id = kwargs.get('order_id')
 
+        if not order_id:
+            return HttpResponse("Order ID não fornecido", status=400)
 
-class OrderDetails(View):
-    def get(self, *args, **kwargs):
-        return render(self.request, 'order/detailPurchase.html')
+        order = get_object_or_404(Order, pk=order_id, user=self.request.user)
+        context = {
+            'title': 'Detalhes ',
+            'order': order
+        }
+        return render(self.request, 'order/detailPurchase.html', context)
 
 
 class SaveOrder(View):
@@ -114,7 +131,7 @@ class SaveOrder(View):
             ) for v in cart.values()
         ]
         )
-
+        del self.request.session['cart']
         return redirect(resolve_url(
             'order:payment',
             order.pk
@@ -126,7 +143,7 @@ class CheckoutSessionView(DispatchLoginRequiredMixin, DetailView):
     def post(self, request, order_id):
         try:
             order = Order.objects.get(id=order_id)
-            payment_method = request.POST.get('payment_method', 'boleto')
+            payment_method = request.POST.get('payment_method', 'card')
 
             session = stripe.checkout.Session.create(
                 payment_method_types=[payment_method],
@@ -145,26 +162,15 @@ class CheckoutSessionView(DispatchLoginRequiredMixin, DetailView):
                 # ------------------Note for devs---------------------
 
                 # If your domain is different of these,
-                # alter the url to your correspondent domain.
+                # alter the url to your correspondent domain
+
                 success_url=(
                     f'http://127.0.0.1:8000/order/success/{
                         order.pk}?session_id={{CHECKOUT_SESSION_ID}}'
                 ),
-
+                # -----------------------------------------------------
 
             )
-            if payment_method == 'boleto':
-                order.status = 'P'
-                messages.info(
-                    self.request,
-                    'Pagamento em processamento.')
-
-                # TODO: Alter to a list of purchase view
-                context = {
-                    'title': 'Lista de pedidos ',
-                    'order': order,
-                }
-                return render(self.request, 'order/list.html', context)
             return redirect(session.url)
 
         except Exception as e:
